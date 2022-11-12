@@ -9,9 +9,10 @@ BUILD_DIR = .build
 ######################################
 # C sources
 C_SOURCES += main.c
+C_SOURCES += osKernal.c
 # ASM sources
 ASM_SOURCES += startup_stm32f407xx.s
-
+ASM_SOURCES += osKernelAsm.s
 
 
 PREFIX = arm-none-eabi-

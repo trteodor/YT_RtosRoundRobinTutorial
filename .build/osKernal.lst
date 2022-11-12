@@ -1,0 +1,473 @@
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"osKernal.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.osKernelStackInit,"ax",%progbits
+  20              		.align	1
+  21              		.global	osKernelStackInit
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	osKernelStackInit:
+  27              	.LVL0:
+  28              	.LFB0:
+  29              		.file 1 "osKernal.c"
+   1:osKernal.c    **** #include "stdint.h"
+   2:osKernal.c    **** 
+   3:osKernal.c    **** void  nnOsSchedulerLaunch(void);
+   4:osKernal.c    **** 
+   5:osKernal.c    **** #define SYSPRI3         (*((volatile uint32_t *)0xE000ED20))
+   6:osKernal.c    **** #define INTCTRL         (*((volatile uint32_t *)0xE000ED04))
+   7:osKernal.c    **** 
+   8:osKernal.c    **** /*SysTick struct from cmsis*/
+   9:osKernal.c    **** typedef struct
+  10:osKernal.c    **** {
+  11:osKernal.c    ****   volatile uint32_t CTRL;                   /*!< Offset: 0x000 (R/W)  SysTick Control and Status Re
+  12:osKernal.c    ****   volatile uint32_t LOAD;                   /*!< Offset: 0x004 (R/W)  SysTick Reload Value Register
+  13:osKernal.c    ****   volatile uint32_t VAL;                    /*!< Offset: 0x008 (R/W)  SysTick Current Value Registe
+  14:osKernal.c    ****   volatile const  uint32_t CALIB;                  /*!< Offset: 0x00C (R/ )  SysTick Calibration Re
+  15:osKernal.c    **** 
+  16:osKernal.c    **** } SysTick_Type;
+  17:osKernal.c    **** 
+  18:osKernal.c    **** #define SCS_BASE            (0xE000E000UL)                            /*!< System Control Space Bas
+  19:osKernal.c    **** #define SysTick_BASE        (SCS_BASE +  0x0010UL)                    /*!< SysTick Base Address */
+  20:osKernal.c    **** #define SysTick             ((SysTick_Type   *)     SysTick_BASE  )   /*!< SysTick configuration st
+  21:osKernal.c    **** 
+  22:osKernal.c    **** #ifndef   __ASM
+  23:osKernal.c    ****   #define __ASM                                  __asm
+  24:osKernal.c    **** #endif
+  25:osKernal.c    **** 
+  26:osKernal.c    **** #define BUS_FREQ 				16000000
+  27:osKernal.c    **** uint32_t MILLIS_PRESCALER;
+  28:osKernal.c    **** 
+  29:osKernal.c    **** 
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s 			page 2
+
+
+  30:osKernal.c    **** #define NUM_OF_THREADS  3        
+  31:osKernal.c    **** #define STACKSIZE   100      
+  32:osKernal.c    **** 
+  33:osKernal.c    **** struct tcb{
+  34:osKernal.c    ****   int32_t *stackPt;       
+  35:osKernal.c    ****   struct tcb *nextPt;  
+  36:osKernal.c    **** };
+  37:osKernal.c    **** 
+  38:osKernal.c    **** typedef struct tcb tcbType;
+  39:osKernal.c    **** tcbType tcbs[NUM_OF_THREADS];
+  40:osKernal.c    **** 
+  41:osKernal.c    **** int32_t TCB_STACK[NUM_OF_THREADS][STACKSIZE];
+  42:osKernal.c    **** 
+  43:osKernal.c    **** void osKernelStackInit(int i){
+  30              		.loc 1 43 30 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  35              		.loc 1 43 30 is_stmt 0 view .LVU1
+  36 0000 10B4     		push	{r4}
+  37              	.LCFI0:
+  38              		.cfi_def_cfa_offset 4
+  39              		.cfi_offset 4, -4
+  44:osKernal.c    ****   tcbs[i].stackPt = &TCB_STACK[i][STACKSIZE-16]; 
+  40              		.loc 1 44 3 is_stmt 1 view .LVU2
+  41              		.loc 1 44 21 is_stmt 0 view .LVU3
+  42 0002 094B     		ldr	r3, .L3
+  43 0004 4FF4C872 		mov	r2, #400
+  44 0008 00FB02F2 		mul	r2, r0, r2
+  45 000c 02F5A871 		add	r1, r2, #336
+  46 0010 1944     		add	r1, r1, r3
+  47              		.loc 1 44 19 view .LVU4
+  48 0012 064C     		ldr	r4, .L3+4
+  49 0014 44F83010 		str	r1, [r4, r0, lsl #3]
+  45:osKernal.c    ****   TCB_STACK[i][STACKSIZE-1] = 0x01000000;   /*The T (24)bit in EPSR must be "set" always instructio
+  50              		.loc 1 45 3 is_stmt 1 view .LVU5
+  51              		.loc 1 45 29 is_stmt 0 view .LVU6
+  52 0018 1344     		add	r3, r3, r2
+  53 001a 4FF08072 		mov	r2, #16777216
+  54 001e C3F88C21 		str	r2, [r3, #396]
+  46:osKernal.c    ****   												This is reset value - 0x01000000*/ 
+  47:osKernal.c    **** }
+  55              		.loc 1 47 1 view .LVU7
+  56 0022 5DF8044B 		ldr	r4, [sp], #4
+  57              	.LCFI1:
+  58              		.cfi_restore 4
+  59              		.cfi_def_cfa_offset 0
+  60 0026 7047     		bx	lr
+  61              	.L4:
+  62              		.align	2
+  63              	.L3:
+  64 0028 00000000 		.word	.LANCHOR0
+  65 002c 00000000 		.word	.LANCHOR1
+  66              		.cfi_endproc
+  67              	.LFE0:
+  69              		.section	.text.osKernelAddThreads,"ax",%progbits
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s 			page 3
+
+
+  70              		.align	1
+  71              		.global	osKernelAddThreads
+  72              		.syntax unified
+  73              		.thumb
+  74              		.thumb_func
+  76              	osKernelAddThreads:
+  77              	.LVL1:
+  78              	.LFB1:
+  48:osKernal.c    **** 
+  49:osKernal.c    **** tcbType *currentPt;
+  50:osKernal.c    **** 
+  51:osKernal.c    **** uint8_t osKernelAddThreads(void(*task0)(void),void(*task1)(void),void(*task2)(void))
+  52:osKernal.c    **** 	{ 
+  79              		.loc 1 52 2 is_stmt 1 view -0
+  80              		.cfi_startproc
+  81              		@ args = 0, pretend = 0, frame = 0
+  82              		@ frame_needed = 0, uses_anonymous_args = 0
+  83              		.loc 1 52 2 is_stmt 0 view .LVU9
+  84 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+  85              	.LCFI2:
+  86              		.cfi_def_cfa_offset 24
+  87              		.cfi_offset 4, -24
+  88              		.cfi_offset 5, -20
+  89              		.cfi_offset 6, -16
+  90              		.cfi_offset 7, -12
+  91              		.cfi_offset 8, -8
+  92              		.cfi_offset 14, -4
+  93 0004 8046     		mov	r8, r0
+  94 0006 0F46     		mov	r7, r1
+  95 0008 1646     		mov	r6, r2
+  53:osKernal.c    **** 
+  54:osKernal.c    ****   __ASM volatile ("cpsid i" : : : "memory"); //Diasble irq
+  96              		.loc 1 54 3 is_stmt 1 view .LVU10
+  97              		.syntax unified
+  98              	@ 54 "osKernal.c" 1
+  99 000a 72B6     		cpsid i
+ 100              	@ 0 "" 2
+  55:osKernal.c    **** 
+  56:osKernal.c    ****   tcbs[0].nextPt = &tcbs[1]; 
+ 101              		.loc 1 56 3 view .LVU11
+ 102              		.loc 1 56 18 is_stmt 0 view .LVU12
+ 103              		.thumb
+ 104              		.syntax unified
+ 105 000c 0E4C     		ldr	r4, .L7
+ 106 000e 04F10803 		add	r3, r4, #8
+ 107 0012 6360     		str	r3, [r4, #4]
+  57:osKernal.c    ****   tcbs[1].nextPt = &tcbs[2]; 
+ 108              		.loc 1 57 3 is_stmt 1 view .LVU13
+ 109              		.loc 1 57 18 is_stmt 0 view .LVU14
+ 110 0014 04F11003 		add	r3, r4, #16
+ 111 0018 E360     		str	r3, [r4, #12]
+  58:osKernal.c    ****   tcbs[2].nextPt = &tcbs[0]; 
+ 112              		.loc 1 58 3 is_stmt 1 view .LVU15
+ 113              		.loc 1 58 18 is_stmt 0 view .LVU16
+ 114 001a 6461     		str	r4, [r4, #20]
+  59:osKernal.c    **** 
+  60:osKernal.c    **** 
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s 			page 4
+
+
+  61:osKernal.c    ****   osKernelStackInit(0); 
+ 115              		.loc 1 61 3 is_stmt 1 view .LVU17
+ 116 001c 0020     		movs	r0, #0
+ 117              	.LVL2:
+ 118              		.loc 1 61 3 is_stmt 0 view .LVU18
+ 119 001e FFF7FEFF 		bl	osKernelStackInit
+ 120              	.LVL3:
+  62:osKernal.c    **** 	TCB_STACK[0][STACKSIZE-2] = (int32_t)(task0); 
+ 121              		.loc 1 62 2 is_stmt 1 view .LVU19
+ 122              		.loc 1 62 28 is_stmt 0 view .LVU20
+ 123 0022 0A4D     		ldr	r5, .L7+4
+ 124 0024 C5F88881 		str	r8, [r5, #392]
+  63:osKernal.c    ****   
+  64:osKernal.c    **** 	osKernelStackInit(1);
+ 125              		.loc 1 64 2 is_stmt 1 view .LVU21
+ 126 0028 0120     		movs	r0, #1
+ 127 002a FFF7FEFF 		bl	osKernelStackInit
+ 128              	.LVL4:
+  65:osKernal.c    **** 	TCB_STACK[1][STACKSIZE-2] = (int32_t)(task1); 
+ 129              		.loc 1 65 2 view .LVU22
+ 130              		.loc 1 65 28 is_stmt 0 view .LVU23
+ 131 002e C5F81873 		str	r7, [r5, #792]
+  66:osKernal.c    ****   
+  67:osKernal.c    **** 	osKernelStackInit(2);
+ 132              		.loc 1 67 2 is_stmt 1 view .LVU24
+ 133 0032 0220     		movs	r0, #2
+ 134 0034 FFF7FEFF 		bl	osKernelStackInit
+ 135              	.LVL5:
+  68:osKernal.c    **** 	TCB_STACK[2][STACKSIZE-2] = (int32_t)(task2); 
+ 136              		.loc 1 68 2 view .LVU25
+ 137              		.loc 1 68 28 is_stmt 0 view .LVU26
+ 138 0038 C5F8A864 		str	r6, [r5, #1192]
+  69:osKernal.c    **** 
+  70:osKernal.c    **** 	currentPt = &tcbs[0]; //Tutaj bedziemy przechowywac adres stosu
+ 139              		.loc 1 70 2 is_stmt 1 view .LVU27
+ 140              		.loc 1 70 12 is_stmt 0 view .LVU28
+ 141 003c 044B     		ldr	r3, .L7+8
+ 142 003e 1C60     		str	r4, [r3]
+  71:osKernal.c    **** 
+  72:osKernal.c    **** 
+  73:osKernal.c    **** __ASM volatile ("cpsie i" : : : "memory"); //Enable irq
+ 143              		.loc 1 73 1 is_stmt 1 view .LVU29
+ 144              		.syntax unified
+ 145              	@ 73 "osKernal.c" 1
+ 146 0040 62B6     		cpsie i
+ 147              	@ 0 "" 2
+  74:osKernal.c    **** 
+  75:osKernal.c    **** 		return 1;              
+ 148              		.loc 1 75 3 view .LVU30
+  76:osKernal.c    **** }
+ 149              		.loc 1 76 1 is_stmt 0 view .LVU31
+ 150              		.thumb
+ 151              		.syntax unified
+ 152 0042 0120     		movs	r0, #1
+ 153 0044 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 154              	.LVL6:
+ 155              	.L8:
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s 			page 5
+
+
+ 156              		.loc 1 76 1 view .LVU32
+ 157              		.align	2
+ 158              	.L7:
+ 159 0048 00000000 		.word	.LANCHOR1
+ 160 004c 00000000 		.word	.LANCHOR0
+ 161 0050 00000000 		.word	.LANCHOR2
+ 162              		.cfi_endproc
+ 163              	.LFE1:
+ 165              		.section	.text.nnOsKernelInit,"ax",%progbits
+ 166              		.align	1
+ 167              		.global	nnOsKernelInit
+ 168              		.syntax unified
+ 169              		.thumb
+ 170              		.thumb_func
+ 172              	nnOsKernelInit:
+ 173              	.LFB2:
+  77:osKernal.c    **** 
+  78:osKernal.c    **** void nnOsKernelInit(void)
+  79:osKernal.c    **** {
+ 174              		.loc 1 79 1 is_stmt 1 view -0
+ 175              		.cfi_startproc
+ 176              		@ args = 0, pretend = 0, frame = 0
+ 177              		@ frame_needed = 0, uses_anonymous_args = 0
+ 178              		@ link register save eliminated.
+  80:osKernal.c    ****     __ASM volatile ("cpsid i" : : : "memory"); //Diasble irq
+ 179              		.loc 1 80 5 view .LVU34
+ 180              		.syntax unified
+ 181              	@ 80 "osKernal.c" 1
+ 182 0000 72B6     		cpsid i
+ 183              	@ 0 "" 2
+  81:osKernal.c    **** 	MILLIS_PRESCALER=(BUS_FREQ/1000);
+ 184              		.loc 1 81 2 view .LVU35
+ 185              		.loc 1 81 18 is_stmt 0 view .LVU36
+ 186              		.thumb
+ 187              		.syntax unified
+ 188 0002 024B     		ldr	r3, .L10
+ 189 0004 4FF47A52 		mov	r2, #16000
+ 190 0008 1A60     		str	r2, [r3]
+  82:osKernal.c    **** 
+  83:osKernal.c    **** }
+ 191              		.loc 1 83 1 view .LVU37
+ 192 000a 7047     		bx	lr
+ 193              	.L11:
+ 194              		.align	2
+ 195              	.L10:
+ 196 000c 00000000 		.word	.LANCHOR3
+ 197              		.cfi_endproc
+ 198              	.LFE2:
+ 200              		.section	.text.osKernelLaunch,"ax",%progbits
+ 201              		.align	1
+ 202              		.global	osKernelLaunch
+ 203              		.syntax unified
+ 204              		.thumb
+ 205              		.thumb_func
+ 207              	osKernelLaunch:
+ 208              	.LVL7:
+ 209              	.LFB3:
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s 			page 6
+
+
+  84:osKernal.c    **** 
+  85:osKernal.c    **** 
+  86:osKernal.c    **** void osKernelLaunch(uint32_t quanta)
+  87:osKernal.c    **** {
+ 210              		.loc 1 87 1 is_stmt 1 view -0
+ 211              		.cfi_startproc
+ 212              		@ args = 0, pretend = 0, frame = 0
+ 213              		@ frame_needed = 0, uses_anonymous_args = 0
+ 214              		.loc 1 87 1 is_stmt 0 view .LVU39
+ 215 0000 08B5     		push	{r3, lr}
+ 216              	.LCFI3:
+ 217              		.cfi_def_cfa_offset 8
+ 218              		.cfi_offset 3, -8
+ 219              		.cfi_offset 14, -4
+  88:osKernal.c    **** 	SysTick->CTRL =0;
+ 220              		.loc 1 88 2 is_stmt 1 view .LVU40
+ 221              		.loc 1 88 16 is_stmt 0 view .LVU41
+ 222 0002 4FF0E023 		mov	r3, #-536813568
+ 223 0006 0022     		movs	r2, #0
+ 224 0008 1A61     		str	r2, [r3, #16]
+  89:osKernal.c    **** 	SysTick->VAL=0;
+ 225              		.loc 1 89 2 is_stmt 1 view .LVU42
+ 226              		.loc 1 89 14 is_stmt 0 view .LVU43
+ 227 000a 9A61     		str	r2, [r3, #24]
+  90:osKernal.c    **** 	SysTick->LOAD = (quanta* MILLIS_PRESCALER)-1;
+ 228              		.loc 1 90 2 is_stmt 1 view .LVU44
+ 229              		.loc 1 90 25 is_stmt 0 view .LVU45
+ 230 000c 094A     		ldr	r2, .L14
+ 231 000e 1268     		ldr	r2, [r2]
+ 232 0010 02FB00F0 		mul	r0, r2, r0
+ 233              	.LVL8:
+ 234              		.loc 1 90 44 view .LVU46
+ 235 0014 0138     		subs	r0, r0, #1
+ 236              		.loc 1 90 16 view .LVU47
+ 237 0016 5861     		str	r0, [r3, #20]
+  91:osKernal.c    **** 
+  92:osKernal.c    **** 
+  93:osKernal.c    ****     SYSPRI3 =(SYSPRI3&0x00FFFFFF)|0xE0000000;
+ 238              		.loc 1 93 5 is_stmt 1 view .LVU48
+ 239              		.loc 1 93 15 is_stmt 0 view .LVU49
+ 240 0018 D3F8202D 		ldr	r2, [r3, #3360]
+ 241              		.loc 1 93 22 view .LVU50
+ 242 001c 22F07F42 		bic	r2, r2, #-16777216
+ 243              		.loc 1 93 34 view .LVU51
+ 244 0020 42F06042 		orr	r2, r2, #-536870912
+ 245              		.loc 1 93 13 view .LVU52
+ 246 0024 C3F8202D 		str	r2, [r3, #3360]
+  94:osKernal.c    **** 
+  95:osKernal.c    **** 	SysTick->CTRL =0x00000007;
+ 247              		.loc 1 95 2 is_stmt 1 view .LVU53
+ 248              		.loc 1 95 16 is_stmt 0 view .LVU54
+ 249 0028 0722     		movs	r2, #7
+ 250 002a 1A61     		str	r2, [r3, #16]
+  96:osKernal.c    **** 	nnOsSchedulerLaunch();
+ 251              		.loc 1 96 2 is_stmt 1 view .LVU55
+ 252 002c FFF7FEFF 		bl	nnOsSchedulerLaunch
+ 253              	.LVL9:
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s 			page 7
+
+
+  97:osKernal.c    **** }
+ 254              		.loc 1 97 1 is_stmt 0 view .LVU56
+ 255 0030 08BD     		pop	{r3, pc}
+ 256              	.L15:
+ 257 0032 00BF     		.align	2
+ 258              	.L14:
+ 259 0034 00000000 		.word	.LANCHOR3
+ 260              		.cfi_endproc
+ 261              	.LFE3:
+ 263              		.section	.text.osThreadYield,"ax",%progbits
+ 264              		.align	1
+ 265              		.global	osThreadYield
+ 266              		.syntax unified
+ 267              		.thumb
+ 268              		.thumb_func
+ 270              	osThreadYield:
+ 271              	.LFB4:
+  98:osKernal.c    **** 
+  99:osKernal.c    ****  void osThreadYield(void)
+ 100:osKernal.c    ****  {
+ 272              		.loc 1 100 2 is_stmt 1 view -0
+ 273              		.cfi_startproc
+ 274              		@ args = 0, pretend = 0, frame = 0
+ 275              		@ frame_needed = 0, uses_anonymous_args = 0
+ 276              		@ link register save eliminated.
+ 101:osKernal.c    **** 	 	SysTick->VAL = 0;
+ 277              		.loc 1 101 4 view .LVU58
+ 278              		.loc 1 101 17 is_stmt 0 view .LVU59
+ 279 0000 4FF0E023 		mov	r3, #-536813568
+ 280 0004 0022     		movs	r2, #0
+ 281 0006 9A61     		str	r2, [r3, #24]
+ 102:osKernal.c    **** 	    INTCTRL = 0x04000000;
+ 282              		.loc 1 102 6 is_stmt 1 view .LVU60
+ 283              		.loc 1 102 14 is_stmt 0 view .LVU61
+ 284 0008 4FF08062 		mov	r2, #67108864
+ 285 000c C3F8042D 		str	r2, [r3, #3332]
+ 103:osKernal.c    ****  }
+ 286              		.loc 1 103 2 view .LVU62
+ 287 0010 7047     		bx	lr
+ 288              		.cfi_endproc
+ 289              	.LFE4:
+ 291              		.global	currentPt
+ 292              		.global	TCB_STACK
+ 293              		.global	tcbs
+ 294              		.global	MILLIS_PRESCALER
+ 295              		.section	.bss.MILLIS_PRESCALER,"aw",%nobits
+ 296              		.align	2
+ 297              		.set	.LANCHOR3,. + 0
+ 300              	MILLIS_PRESCALER:
+ 301 0000 00000000 		.space	4
+ 302              		.section	.bss.TCB_STACK,"aw",%nobits
+ 303              		.align	2
+ 304              		.set	.LANCHOR0,. + 0
+ 307              	TCB_STACK:
+ 308 0000 00000000 		.space	1200
+ 308      00000000 
+ 308      00000000 
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s 			page 8
+
+
+ 308      00000000 
+ 308      00000000 
+ 309              		.section	.bss.currentPt,"aw",%nobits
+ 310              		.align	2
+ 311              		.set	.LANCHOR2,. + 0
+ 314              	currentPt:
+ 315 0000 00000000 		.space	4
+ 316              		.section	.bss.tcbs,"aw",%nobits
+ 317              		.align	2
+ 318              		.set	.LANCHOR1,. + 0
+ 321              	tcbs:
+ 322 0000 00000000 		.space	24
+ 322      00000000 
+ 322      00000000 
+ 322      00000000 
+ 322      00000000 
+ 323              		.text
+ 324              	.Letext0:
+ 325              		.file 2 "d:\\gnu_tools\\gnu arm embedded toolchain\\10 2021.10\\arm-none-eabi\\include\\machine\\_
+ 326              		.file 3 "d:\\gnu_tools\\gnu arm embedded toolchain\\10 2021.10\\arm-none-eabi\\include\\sys\\_stdi
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 osKernal.c
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:20     .text.osKernelStackInit:00000000 $t
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:26     .text.osKernelStackInit:00000000 osKernelStackInit
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:64     .text.osKernelStackInit:00000028 $d
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:70     .text.osKernelAddThreads:00000000 $t
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:76     .text.osKernelAddThreads:00000000 osKernelAddThreads
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:159    .text.osKernelAddThreads:00000048 $d
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:166    .text.nnOsKernelInit:00000000 $t
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:172    .text.nnOsKernelInit:00000000 nnOsKernelInit
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:196    .text.nnOsKernelInit:0000000c $d
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:201    .text.osKernelLaunch:00000000 $t
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:207    .text.osKernelLaunch:00000000 osKernelLaunch
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:259    .text.osKernelLaunch:00000034 $d
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:264    .text.osThreadYield:00000000 $t
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:270    .text.osThreadYield:00000000 osThreadYield
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:314    .bss.currentPt:00000000 currentPt
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:307    .bss.TCB_STACK:00000000 TCB_STACK
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:321    .bss.tcbs:00000000 tcbs
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:300    .bss.MILLIS_PRESCALER:00000000 MILLIS_PRESCALER
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:296    .bss.MILLIS_PRESCALER:00000000 $d
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:303    .bss.TCB_STACK:00000000 $d
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:310    .bss.currentPt:00000000 $d
+C:\Users\Teodor\AppData\Local\Temp\cc1IdHaz.s:317    .bss.tcbs:00000000 $d
+
+UNDEFINED SYMBOLS
+nnOsSchedulerLaunch

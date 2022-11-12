@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\Teodor\AppData\Local\Temp\ccmNwyWi.s 			page 1
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -19,59 +19,268 @@ ARM GAS  C:\Users\Teodor\AppData\Local\Temp\ccmNwyWi.s 			page 1
   16              		.text
   17              	.Ltext0:
   18              		.cfi_sections	.debug_frame
-  19              		.section	.text.main,"ax",%progbits
+  19              		.section	.text.Task0,"ax",%progbits
   20              		.align	1
-  21              		.global	main
+  21              		.global	Task0
   22              		.syntax unified
   23              		.thumb
   24              		.thumb_func
-  26              	main:
+  26              	Task0:
   27              	.LFB0:
   28              		.file 1 "main.c"
-   1:main.c        **** 
-   2:main.c        **** 
+   1:main.c        **** #include "stdint.h"
+   2:main.c        **** #include "osKernel.h"
    3:main.c        **** 
-   4:main.c        **** int main(void)
-   5:main.c        **** {
-  29              		.loc 1 5 1 view -0
+   4:main.c        **** uint32_t count0,count1,count2;
+   5:main.c        **** 
+   6:main.c        **** void Task0(void)
+   7:main.c        **** {
+  29              		.loc 1 7 1 view -0
   30              		.cfi_startproc
   31              		@ Volatile: function does not return.
   32              		@ args = 0, pretend = 0, frame = 0
   33              		@ frame_needed = 0, uses_anonymous_args = 0
   34              		@ link register save eliminated.
   35              	.L2:
-   6:main.c        **** 
-   7:main.c        ****     while(1)
-  36              		.loc 1 7 5 discriminator 1 view .LVU1
-   8:main.c        ****     {
-   9:main.c        **** 
-  10:main.c        ****     }
-  37              		.loc 1 10 5 discriminator 1 view .LVU2
-   7:main.c        **** 
-
-
-int main(void)
-{
-
-    while(1)
-    {
-
-    }
-
-    
-}
-  38              		.loc 1 7 10 discriminator 1 view .LVU3
-  39 0000 FEE7     		b	.L2
-  40              		.cfi_endproc
-  41              	.LFE0:
-  43              		.text
-  44              	.Letext0:
-ARM GAS  C:\Users\Teodor\AppData\Local\Temp\ccmNwyWi.s 			page 2
+   8:main.c        **** 	while(1)
+  36              		.loc 1 8 2 discriminator 1 view .LVU1
+   9:main.c        **** 	{
+  10:main.c        **** 		count0++;
+  37              		.loc 1 10 3 discriminator 1 view .LVU2
+  38              		.loc 1 10 9 is_stmt 0 discriminator 1 view .LVU3
+  39 0000 024A     		ldr	r2, .L3
+  40 0002 1368     		ldr	r3, [r2]
+  41 0004 0133     		adds	r3, r3, #1
+  42 0006 1360     		str	r3, [r2]
+   8:main.c        **** 	while(1)
+  43              		.loc 1 8 7 is_stmt 1 discriminator 1 view .LVU4
+  44 0008 FAE7     		b	.L2
+  45              	.L4:
+  46 000a 00BF     		.align	2
+  47              	.L3:
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s 			page 2
+
+
+  48 000c 00000000 		.word	.LANCHOR0
+  49              		.cfi_endproc
+  50              	.LFE0:
+  52              		.section	.text.Task2,"ax",%progbits
+  53              		.align	1
+  54              		.global	Task2
+  55              		.syntax unified
+  56              		.thumb
+  57              		.thumb_func
+  59              	Task2:
+  60              	.LFB2:
+  11:main.c        **** 	}
+  12:main.c        **** 	
+  13:main.c        **** }
+  14:main.c        **** 
+  15:main.c        **** 
+  16:main.c        **** void Task1(void)
+  17:main.c        **** {
+  18:main.c        **** 
+  19:main.c        **** 	while(1)
+  20:main.c        **** 	{
+  21:main.c        **** 		count1++;
+  22:main.c        **** 		osThreadYield();
+  23:main.c        **** 	}
+  24:main.c        **** 	
+  25:main.c        **** }
+  26:main.c        **** 
+  27:main.c        **** 
+  28:main.c        **** void Task2(void)
+  29:main.c        **** {
+  61              		.loc 1 29 1 view -0
+  62              		.cfi_startproc
+  63              		@ Volatile: function does not return.
+  64              		@ args = 0, pretend = 0, frame = 0
+  65              		@ frame_needed = 0, uses_anonymous_args = 0
+  66              		@ link register save eliminated.
+  67              	.L6:
+  30:main.c        **** 	while(1)
+  68              		.loc 1 30 2 discriminator 1 view .LVU6
+  31:main.c        **** 	{
+  32:main.c        **** 		count2++;
+  69              		.loc 1 32 3 discriminator 1 view .LVU7
+  70              		.loc 1 32 9 is_stmt 0 discriminator 1 view .LVU8
+  71 0000 024A     		ldr	r2, .L7
+  72 0002 1368     		ldr	r3, [r2]
+  73 0004 0133     		adds	r3, r3, #1
+  74 0006 1360     		str	r3, [r2]
+  30:main.c        **** 	while(1)
+  75              		.loc 1 30 7 is_stmt 1 discriminator 1 view .LVU9
+  76 0008 FAE7     		b	.L6
+  77              	.L8:
+  78 000a 00BF     		.align	2
+  79              	.L7:
+  80 000c 00000000 		.word	.LANCHOR1
+  81              		.cfi_endproc
+  82              	.LFE2:
+  84              		.section	.text.Task1,"ax",%progbits
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s 			page 3
+
+
+  85              		.align	1
+  86              		.global	Task1
+  87              		.syntax unified
+  88              		.thumb
+  89              		.thumb_func
+  91              	Task1:
+  92              	.LFB1:
+  17:main.c        **** 
+  93              		.loc 1 17 1 view -0
+  94              		.cfi_startproc
+  95              		@ Volatile: function does not return.
+  96              		@ args = 0, pretend = 0, frame = 0
+  97              		@ frame_needed = 0, uses_anonymous_args = 0
+  98 0000 08B5     		push	{r3, lr}
+  99              	.LCFI0:
+ 100              		.cfi_def_cfa_offset 8
+ 101              		.cfi_offset 3, -8
+ 102              		.cfi_offset 14, -4
+ 103              	.L10:
+  19:main.c        **** 	{
+ 104              		.loc 1 19 2 discriminator 1 view .LVU11
+  21:main.c        **** 		osThreadYield();
+ 105              		.loc 1 21 3 discriminator 1 view .LVU12
+  21:main.c        **** 		osThreadYield();
+ 106              		.loc 1 21 9 is_stmt 0 discriminator 1 view .LVU13
+ 107 0002 034A     		ldr	r2, .L12
+ 108 0004 1368     		ldr	r3, [r2]
+ 109 0006 0133     		adds	r3, r3, #1
+ 110 0008 1360     		str	r3, [r2]
+  22:main.c        **** 	}
+ 111              		.loc 1 22 3 is_stmt 1 discriminator 1 view .LVU14
+ 112 000a FFF7FEFF 		bl	osThreadYield
+ 113              	.LVL0:
+  19:main.c        **** 	{
+ 114              		.loc 1 19 7 discriminator 1 view .LVU15
+ 115 000e F8E7     		b	.L10
+ 116              	.L13:
+ 117              		.align	2
+ 118              	.L12:
+ 119 0010 00000000 		.word	.LANCHOR2
+ 120              		.cfi_endproc
+ 121              	.LFE1:
+ 123              		.section	.text.main,"ax",%progbits
+ 124              		.align	1
+ 125              		.global	main
+ 126              		.syntax unified
+ 127              		.thumb
+ 128              		.thumb_func
+ 130              	main:
+ 131              	.LFB3:
+  33:main.c        **** 	}
+  34:main.c        **** 	
+  35:main.c        **** }
+  36:main.c        **** 
+  37:main.c        **** 
+  38:main.c        **** 
+  39:main.c        **** 
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s 			page 4
+
+
+  40:main.c        **** int main(void)
+  41:main.c        **** {
+ 132              		.loc 1 41 1 view -0
+ 133              		.cfi_startproc
+ 134              		@ Volatile: function does not return.
+ 135              		@ args = 0, pretend = 0, frame = 0
+ 136              		@ frame_needed = 0, uses_anonymous_args = 0
+ 137 0000 08B5     		push	{r3, lr}
+ 138              	.LCFI1:
+ 139              		.cfi_def_cfa_offset 8
+ 140              		.cfi_offset 3, -8
+ 141              		.cfi_offset 14, -4
+  42:main.c        **** 
+  43:main.c        ****     nnOsKernelInit();
+ 142              		.loc 1 43 5 view .LVU17
+ 143 0002 FFF7FEFF 		bl	nnOsKernelInit
+ 144              	.LVL1:
+  44:main.c        ****     osKernelAddThreads(Task0,Task1,Task2);
+ 145              		.loc 1 44 5 view .LVU18
+ 146 0006 044A     		ldr	r2, .L17
+ 147 0008 0449     		ldr	r1, .L17+4
+ 148 000a 0548     		ldr	r0, .L17+8
+ 149 000c FFF7FEFF 		bl	osKernelAddThreads
+ 150              	.LVL2:
+  45:main.c        ****     osKernelLaunch(10u);
+ 151              		.loc 1 45 5 view .LVU19
+ 152 0010 0A20     		movs	r0, #10
+ 153 0012 FFF7FEFF 		bl	osKernelLaunch
+ 154              	.LVL3:
+ 155              	.L15:
+  46:main.c        **** 
+  47:main.c        ****     while(1)
+ 156              		.loc 1 47 5 discriminator 1 view .LVU20
+  48:main.c        ****     {
+  49:main.c        **** 
+  50:main.c        ****     }
+ 157              		.loc 1 50 5 discriminator 1 view .LVU21
+  47:main.c        ****     {
+ 158              		.loc 1 47 10 discriminator 1 view .LVU22
+ 159 0016 FEE7     		b	.L15
+ 160              	.L18:
+ 161              		.align	2
+ 162              	.L17:
+ 163 0018 00000000 		.word	Task2
+ 164 001c 00000000 		.word	Task1
+ 165 0020 00000000 		.word	Task0
+ 166              		.cfi_endproc
+ 167              	.LFE3:
+ 169              		.global	count2
+ 170              		.global	count1
+ 171              		.global	count0
+ 172              		.section	.bss.count0,"aw",%nobits
+ 173              		.align	2
+ 174              		.set	.LANCHOR0,. + 0
+ 177              	count0:
+ 178 0000 00000000 		.space	4
+ 179              		.section	.bss.count1,"aw",%nobits
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s 			page 5
+
+
+ 180              		.align	2
+ 181              		.set	.LANCHOR2,. + 0
+ 184              	count1:
+ 185 0000 00000000 		.space	4
+ 186              		.section	.bss.count2,"aw",%nobits
+ 187              		.align	2
+ 188              		.set	.LANCHOR1,. + 0
+ 191              	count2:
+ 192 0000 00000000 		.space	4
+ 193              		.text
+ 194              	.Letext0:
+ 195              		.file 2 "d:\\gnu_tools\\gnu arm embedded toolchain\\10 2021.10\\arm-none-eabi\\include\\machine\\_
+ 196              		.file 3 "d:\\gnu_tools\\gnu arm embedded toolchain\\10 2021.10\\arm-none-eabi\\include\\sys\\_stdi
+ 197              		.file 4 "osKernel.h"
+ARM GAS  C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s 			page 6
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\Teodor\AppData\Local\Temp\ccmNwyWi.s:20     .text.main:00000000 $t
-C:\Users\Teodor\AppData\Local\Temp\ccmNwyWi.s:26     .text.main:00000000 main
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:20     .text.Task0:00000000 $t
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:26     .text.Task0:00000000 Task0
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:48     .text.Task0:0000000c $d
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:53     .text.Task2:00000000 $t
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:59     .text.Task2:00000000 Task2
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:80     .text.Task2:0000000c $d
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:85     .text.Task1:00000000 $t
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:91     .text.Task1:00000000 Task1
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:119    .text.Task1:00000010 $d
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:124    .text.main:00000000 $t
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:130    .text.main:00000000 main
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:163    .text.main:00000018 $d
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:191    .bss.count2:00000000 count2
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:184    .bss.count1:00000000 count1
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:177    .bss.count0:00000000 count0
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:173    .bss.count0:00000000 $d
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:180    .bss.count1:00000000 $d
+C:\Users\Teodor\AppData\Local\Temp\ccRV8ZLk.s:187    .bss.count2:00000000 $d
 
-NO UNDEFINED SYMBOLS
+UNDEFINED SYMBOLS
+osThreadYield
+nnOsKernelInit
+osKernelAddThreads
+osKernelLaunch
