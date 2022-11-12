@@ -1,0 +1,28 @@
+{
+    "files.associations": {
+        "gpio_fun.h": "c",
+        "usart_uart_dma.h": "c",
+        "stm32f103xb.h": "c",
+        "core_cm3.h": "c",
+        "system_stm32f1xx.h": "c",
+        "rcc_config.h": "c",
+        "printtobuf.h": "c",
+        "stdio.h": "c",
+        "sstream": "c",
+        "main.h": "c",
+        "config.h": "c",
+        "contable.h": "c",
+        "stm32f407xx.h": "c",
+        "uart2_dlt.h": "c",
+        "ili9341_spi.h": "c",
+        "dlt_logs_mcu.h": "c",
+        "rtc.h": "c",
+        "gpio.h": "c",
+        "lv_examples.h": "c",
+        "lv_refr.h": "c",
+        "i2c_wii.h": "c",
+        "stm32f4xx.h": "c",
+        "oskernel.h": "c"
+    },
+    "cortex-debug.variableUseNaturalFormat": false
+}

@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cortex Debug",
+            "cwd": "${workspaceRoot}",
+            "executable": "./.build/CortexM4rtos_Vtut.elf",
+            "preLaunchTask": "buildApp",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "device": "STM32F407VT",
+            "svdFile": "STM32F407.svd"
+            "configFiles": [
+                "interface/stlink.cfg",
+                "target/stm32f4x.cfg"
+            ],
+            "interface": "swd",
+            "runToMain": true,
+        },
+    ]
+}
