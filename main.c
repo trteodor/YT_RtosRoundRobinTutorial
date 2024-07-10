@@ -9,7 +9,7 @@ void Task0(void)
 	{
 		count0++;
 	}
-	
+
 }
 
 
@@ -21,9 +21,8 @@ void Task1(void)
 		count1++;
 		osThreadYield();
 	}
-	
-}
 
+}
 
 void Task2(void)
 {
@@ -31,15 +30,11 @@ void Task2(void)
 	{
 		count2++;
 	}
-	
+
 }
-
-
-
 
 int main(void)
 {
-
     nnOsKernelInit();
     osKernelAddThreads(Task0,Task1,Task2);
     osKernelLaunch(10u);
@@ -49,5 +44,4 @@ int main(void)
 
     }
 
-    
 }
